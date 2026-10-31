@@ -3,6 +3,18 @@
 Session: **Did the AI actually book it?** · DevFest Raipur 2026 · KD
 Audience: students + working developers. Format: short concepts, long hands-on, short career talk.
 
+## DevFest Raipur 2026 slot: 3:30–4:30 PM (60 min, right after lunch)
+
+| Clock | Block |
+|---|---|
+| 3:30–3:36 | Hook: post-lunch meme, intro, naive demo, ghost booking |
+| 3:36–3:42 | Concepts (fncall + boundary slides are 60 seconds each) |
+| 3:42–3:57 | **CP1** as a live code-along · `catchup.py 1` at 3:57 for everyone |
+| 3:57–4:07 | **CP2** · `catchup.py 2` at 4:07 |
+| 4:07–4:20 | **CP3** + chaos modes (never cut) |
+| 4:20–4:26 | Career: students, then professionals |
+| 4:26–4:30 | Rules slide, Q&A, hard stop |
+
 ## Pick your run sheet
 
 The slot is "an hour and more", so here are three versions. Minutes are from the start of *your* session,
