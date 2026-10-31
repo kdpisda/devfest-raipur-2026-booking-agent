@@ -17,16 +17,24 @@ LOOKUP_CUSTOMER = {
     "parameters": {"type": "object", "properties": {}},
 }
 
-# TODO 1 ─ declare check_availability                                (Step 1)
-#
-#   Copy the shape of LOOKUP_CUSTOMER / CREATE_BOOKING. You need:
-#     name: "check_availability"
-#     description: when to use it (be specific: "only when you know date, time and head count")
-#     parameters: date (YYYY-MM-DD), start_time (24h HH:MM), end_time (24h HH:MM),
-#                 capacity (integer = number of people) — all four required.
-#
-#   Tip: describe the FORMAT in each description. That's how "kal 2 baje" becomes "14:00".
-CHECK_AVAILABILITY = None
+CHECK_AVAILABILITY = {
+    "name": "check_availability",
+    "description": (
+        "Find meeting rooms that are free for a time slot and fit the group. "
+        "Returns bookable offers (each with an offer_id and the real price) or nearby "
+        "alternative slots. Only call when you know date, start time, end time and head count."
+    ),
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "date": {"type": "string", "description": "Date in YYYY-MM-DD (IST)."},
+            "start_time": {"type": "string", "description": "Start, 24h HH:MM, e.g. 14:00"},
+            "end_time": {"type": "string", "description": "End, 24h HH:MM, e.g. 16:00"},
+            "capacity": {"type": "integer", "description": "Number of people attending."},
+        },
+        "required": ["date", "start_time", "end_time", "capacity"],
+    },
+}
 
 CREATE_BOOKING = {
     "name": "create_booking",
@@ -45,4 +53,4 @@ CREATE_BOOKING = {
     },
 }
 
-TOOL_DECLARATIONS = [d for d in (LOOKUP_CUSTOMER, CHECK_AVAILABILITY, CREATE_BOOKING) if d]
+TOOL_DECLARATIONS = [LOOKUP_CUSTOMER, CHECK_AVAILABILITY, CREATE_BOOKING]

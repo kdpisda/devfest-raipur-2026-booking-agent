@@ -23,39 +23,38 @@ def _detail(r: httpx.Response) -> str:
 # --------------------------------------------------------------------------
 def lookup_customer(s: Session) -> dict:
     """Who is messaging us? Uses the trusted sender phone, never a model-chosen ID."""
-    # TODO 2 ─ look the sender up in the CRM                         (Step 1)
-    #
-    #   GET /customers/lookup?phone=<s.sender_phone>
-    #     404 → s.customer = None
-    #           return {"status": "not_found", "reason": "..."}
-    #     200 → s.customer = r.json()            # keep the FULL record on the session
-    #           return {"status": "found", "name": ..., "plan": ..., "company": ...}
-    #
-    #   Hint:  with s.http() as h:
-    #              r = h.get("/customers/lookup", params={"phone": s.sender_phone})
-    #
-    #   Why the phone and not an argument? Because a model-chosen customer ID is
-    #   how you end up booking on someone else's account.
-    raise NotImplementedError("TODO 2: lookup_customer")
+    with s.http() as h:
+        r = h.get("/customers/lookup", params={"phone": s.sender_phone})
+    if r.status_code == 404:
+        s.customer = None
+        return {"status": "not_found", "reason": "this phone number is not in our CRM"}
+    r.raise_for_status()
+    s.customer = r.json()
+    return {"status": "found", "name": s.customer["name"], "plan": s.customer["plan"],
+            "company": s.customer["company"]}
 
 
 def check_availability(s: Session, date: str, start_time: str, end_time: str,
                        capacity: int) -> dict:
     """Ask the CRM which rooms are free. Prices come from the CRM, never from the model."""
-    # TODO 3 ─ check availability                                      (Step 1)
-    #
-    #   1. If s.customer is None → return {"status": "error", "reason": "call lookup_customer first"}
-    #   2. GET /rooms/availability with params:
-    #        customer_id=s.customer["id"], date, start_time, end_time, capacity=int(capacity)
-    #   3. 422 → return {"status": "invalid_request", "reason": _detail(r)}
-    #        (bad input is DATA the model can fix, not a crash)
-    #   4. For every option in data["options"]: s.offers[opt["offer_id"]] = opt
-    #        (later, only offers we actually showed can be booked)
-    #   5. return {"status": "ok",
-    #              "options": options WITHOUT the internal "room_id" key,
-    #              "alternatives": data["alternatives"],
-    #              "unavailable_rooms": data["unavailable_rooms"]}
-    raise NotImplementedError("TODO 3: check_availability")
+    if s.customer is None:
+        return {"status": "error", "reason": "call lookup_customer first"}
+    params = {"customer_id": s.customer["id"], "date": date, "start_time": start_time,
+              "end_time": end_time, "capacity": int(capacity)}
+    with s.http() as h:
+        r = h.get("/rooms/availability", params=params)
+    if r.status_code == 422:
+        return {"status": "invalid_request", "reason": _detail(r)}
+    r.raise_for_status()
+    data = r.json()
+    for opt in data["options"]:
+        s.offers[opt["offer_id"]] = opt          # remember exactly what we showed
+    return {
+        "status": "ok",
+        "options": [{k: v for k, v in o.items() if k != "room_id"} for o in data["options"]],
+        "alternatives": data.get("alternatives", []),
+        "unavailable_rooms": data.get("unavailable_rooms", []),
+    }
 
 
 # --------------------------------------------------------------------------
