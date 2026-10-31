@@ -19,11 +19,11 @@ def _detail(r: httpx.Response) -> str:
 
 
 # --------------------------------------------------------------------------
-# CHECKPOINT 1 · read-only tools
+# STEP 1 · read-only tools
 # --------------------------------------------------------------------------
 def lookup_customer(s: Session) -> dict:
     """Who is messaging us? Uses the trusted sender phone, never a model-chosen ID."""
-    # TODO 2 ─ look the sender up in the CRM                         (Checkpoint 1)
+    # TODO 2 ─ look the sender up in the CRM                         (Step 1)
     #
     #   GET /customers/lookup?phone=<s.sender_phone>
     #     404 → s.customer = None
@@ -42,7 +42,7 @@ def lookup_customer(s: Session) -> dict:
 def check_availability(s: Session, date: str, start_time: str, end_time: str,
                        capacity: int) -> dict:
     """Ask the CRM which rooms are free. Prices come from the CRM, never from the model."""
-    # TODO 3 ─ check availability                                      (Checkpoint 1)
+    # TODO 3 ─ check availability                                      (Step 1)
     #
     #   1. If s.customer is None → return {"status": "error", "reason": "call lookup_customer first"}
     #   2. GET /rooms/availability with params:
@@ -59,14 +59,14 @@ def check_availability(s: Session, date: str, start_time: str, end_time: str,
 
 
 # --------------------------------------------------------------------------
-# CHECKPOINT 2 · the write: confirmation gate + create
+# STEP 2 · the write: confirmation gate + create
 # --------------------------------------------------------------------------
 NOT_DONE = ("Do NOT tell the customer it is booked. Do not retry on your own. "
             "Tell them honestly what happened and that a team member will follow up.")
 
 
 def create_booking(s: Session, offer_id: str) -> dict:
-    # TODO 4 ─ the write                                                (Checkpoint 2)
+    # TODO 4 ─ the write                                                (Step 2)
     #
     #   1. offer = s.offers.get(offer_id)
     #        None → return {"status": "rejected", "reason": "unknown offer_id ..."}
@@ -90,7 +90,7 @@ def create_booking(s: Session, offer_id: str) -> dict:
 
 
 # --------------------------------------------------------------------------
-# CHECKPOINT 3 · verification (see verify.py) wired into the result
+# STEP 3 · verification (see verify.py) wired into the result
 # --------------------------------------------------------------------------
 def _verified_result(s: Session, h: httpx.Client, booking_id: str, expected: dict,
                      offer: dict) -> dict:

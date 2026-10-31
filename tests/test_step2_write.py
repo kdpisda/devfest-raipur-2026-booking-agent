@@ -1,4 +1,4 @@
-"""CHECKPOINT 2 · pytest tests/test_cp2_booking.py"""
+"""STEP 2 · pytest tests/test_step2_write.py"""
 from conftest import chaos, make_session, stored_bookings
 
 from agent.tools import check_availability, create_booking, lookup_customer

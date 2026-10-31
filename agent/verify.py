@@ -24,7 +24,7 @@ def verify_booking(http: httpx.Client, booking_id: str, expected: dict) -> Verif
 
     expected = {"customer_id", "room_id", "date", "start_time", "end_time"}
     """
-    # TODO 5 ─ trust, but verify                                        (Checkpoint 3)
+    # TODO 5 ─ trust, but verify                                        (Step 3)
     #
     #   1. r = http.get(f"/bookings/{booking_id}")
     #        httpx.HTTPError → Verification(False, None, ["could not read booking back: ..."])

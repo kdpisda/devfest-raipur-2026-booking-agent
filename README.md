@@ -28,6 +28,7 @@ python -m venv .venv && source .venv/bin/activate     # Windows: .venv\Scripts\a
 pip install -r requirements.txt
 cp .env.example .env        # paste your key from https://aistudio.google.com/apikey
 python check_setup.py
+git checkout step-1          # where the hands-on starts
 ```
 
 No laptop setup? Open a [Colab](https://colab.research.google.com) notebook and run
@@ -50,18 +51,34 @@ Open **http://127.0.0.1:8765/** for the CRM board: what is *really* in the datab
 
 Chat commands: `/chaos ghost|wrong_room|pending|fail|slow|none`, `/reset`, `/quit`.
 
-## What you build
+## The story
 
-| # | File | TODO | Checkpoint test |
-|---|------|------|-----------------|
-| 1 | `agent/declarations.py` | declare `check_availability` | `pytest tests/test_cp1_read_tools.py` |
-| 2 | `agent/tools.py` | `lookup_customer` | 〃 |
-| 3 | `agent/tools.py` | `check_availability` | 〃 |
-| 4 | `agent/tools.py` | `create_booking` + the Confirm gate | `pytest tests/test_cp2_booking.py` |
-| 5 | `agent/verify.py` | `verify_booking` read-back | `pytest tests/test_cp3_verify.py` |
-| ★ | already in `tools.py` | timeouts + idempotency | `pytest tests/test_bonus_idempotency.py` |
+Sharma ji runs **Chai & Code Cowork** in Raipur. Over the weekend his beta "shipped" an AI receptionist
+on WhatsApp. On Monday it told Priya her meeting room was booked. On Tuesday at 2 PM, Priya and five
+colleagues walked in. There was no booking. Today we rebuild that agent, in three steps, so it never
+says "booked" unless it really booked. (Everyone in this story is fictional.)
 
-Behind? `python catchup.py 1` (or 2, 3). Your work is saved as `agent/*.mine.py`.
+## The steps are git branches
+
+Every step has a **start** branch and a **solution** branch. Work on the start branch; if you get stuck
+or fall behind, jump to the solution and carry on from there.
+
+| Step | Start here | What you build | Check yourself | Stuck? |
+|------|------------|----------------|----------------|--------|
+| 1 · Reads | `git checkout step-1` | TODO 1–3: declare `check_availability`, `lookup_customer`, `check_availability` | `pytest tests/test_step1_reads.py` | `git checkout step-1-solution` |
+| 2 · The write | `git checkout step-2` | TODO 4: `create_booking` + the Confirm gate | `pytest tests/test_step2_write.py` | `git checkout step-2-solution` |
+| 3 · The proof | `git checkout step-3` | TODO 5: `verify_booking` read-back | `pytest tests/test_step3_verify.py` | `git checkout step-3-solution` |
+| ★ Bonus | `step-3-solution` | timeouts + idempotency (already implemented) | `pytest tests/test_bonus_idempotency.py` | — |
+
+Switching branches with unfinished edits? Park them first:
+
+```bash
+git stash            # keeps your work safe
+git checkout step-2  # move on with the room
+git stash list       # your old attempt is still there
+```
+
+See exactly what a solution changed: `git diff step-1..step-1-solution`.
 
 ## Chaos modes (the CRM lies to you on purpose)
 

@@ -17,7 +17,7 @@ LOOKUP_CUSTOMER = {
     "parameters": {"type": "object", "properties": {}},
 }
 
-# TODO 1 ─ declare check_availability                                (Checkpoint 1)
+# TODO 1 ─ declare check_availability                                (Step 1)
 #
 #   Copy the shape of LOOKUP_CUSTOMER / CREATE_BOOKING. You need:
 #     name: "check_availability"

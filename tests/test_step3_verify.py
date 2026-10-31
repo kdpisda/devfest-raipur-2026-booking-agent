@@ -1,4 +1,4 @@
-"""CHECKPOINT 3 · pytest tests/test_cp3_verify.py"""
+"""STEP 3 · pytest tests/test_step3_verify.py"""
 import pytest
 from conftest import chaos, make_session, stored_bookings
 

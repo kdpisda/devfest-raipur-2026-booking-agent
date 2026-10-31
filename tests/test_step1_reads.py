@@ -1,4 +1,4 @@
-"""CHECKPOINT 1 · pytest tests/test_cp1_read_tools.py"""
+"""STEP 1 · pytest tests/test_step1_reads.py"""
 from conftest import make_session
 
 from agent.declarations import TOOL_DECLARATIONS
