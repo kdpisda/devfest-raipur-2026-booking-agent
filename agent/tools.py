@@ -65,27 +65,48 @@ NOT_DONE = ("Do NOT tell the customer it is booked. Do not retry on your own. "
 
 
 def create_booking(s: Session, offer_id: str) -> dict:
-    # TODO 4 ─ the write                                                (Step 2)
-    #
-    #   1. offer = s.offers.get(offer_id)
-    #        None → return {"status": "rejected", "reason": "unknown offer_id ..."}
-    #        (the model can hallucinate IDs; we only book what we showed)
-    #   2. s.customer is None → {"status": "rejected", ...}
-    #   3. THE GATE:  if not s.naive and not s.confirm(offer):
-    #                     return {"status": "not_confirmed", "reason": "..."}
-    #   4. key = f"{s.customer['id']}:{offer_id}"          # idempotency key
-    #      expected = {customer_id, room_id, date, start_time, end_time}  (from s.customer + offer)
-    #   5. with s.http() as h:
-    #          POST /bookings  json={"customer_id": ..., "offer_id": offer_id}
-    #                          headers={"Idempotency-Key": key}
-    #        httpx.TimeoutException → return _reconcile(s, h, key, expected)   (bonus, prepared)
-    #        other httpx.HTTPError  → {"status": "failed", ..., "instruction": NOT_DONE}
-    #        409 → {"status": "conflict", ...}     410 → {"status": "expired", ...}
-    #        other >= 400 → {"status": "failed", ..., "instruction": NOT_DONE}
-    #   6. booking = r.json()
-    #        if s.naive: return {"status": "booked", "booking_id": booking["id"]}
-    #        return _verified_result(s, h, booking["id"], expected, offer)
-    raise NotImplementedError("TODO 4: create_booking")
+    offer = s.offers.get(offer_id)
+    if offer is None:
+        return {"status": "rejected",
+                "reason": "unknown offer_id: only offers returned by check_availability can be booked"}
+    if s.customer is None:
+        return {"status": "rejected", "reason": "call lookup_customer first"}
+
+    # The model saying "they said yes" is a suggestion. The button is the contract.
+    if not s.naive and not s.confirm(offer):
+        return {"status": "not_confirmed", "reason": "customer did not tap Confirm; nothing was booked"}
+
+    key = f"{s.customer['id']}:{offer_id}"     # same intent -> same key -> no duplicates
+    expected = {"customer_id": s.customer["id"], "room_id": offer["room_id"],
+                "date": offer["date"], "start_time": offer["start_time"],
+                "end_time": offer["end_time"]}
+
+    with s.http() as h:
+        try:
+            r = h.post("/bookings", json={"customer_id": s.customer["id"], "offer_id": offer_id},
+                       headers={"Idempotency-Key": key})
+        except httpx.TimeoutException:
+            # The write MAY have happened. Don't guess, don't blindly retry: reconcile.
+            return _reconcile(s, h, key, expected)
+        except httpx.HTTPError as e:
+            return {"status": "failed", "reason": f"could not reach CRM ({type(e).__name__})",
+                    "instruction": NOT_DONE}
+
+        if r.status_code == 409:
+            return {"status": "conflict", "reason": "that slot was just taken",
+                    "instruction": "Apologise and offer to check availability again."}
+        if r.status_code == 410:
+            return {"status": "expired", "reason": "offer expired",
+                    "instruction": "Check availability again before booking."}
+        if r.status_code >= 400:
+            return {"status": "failed", "reason": f"CRM returned HTTP {r.status_code}: {_detail(r)}",
+                    "instruction": NOT_DONE}
+
+        booking = r.json()
+        if s.naive:   # the demo villain: trusts whatever the API said
+            return {"status": "booked", "booking_id": booking["id"]}
+
+        return _verified_result(s, h, booking["id"], expected, offer)
 
 
 # --------------------------------------------------------------------------
