@@ -1,6 +1,6 @@
 """agent/booking.py — THE ONLY FILE YOU EDIT TODAY.
 
-Sharma ji's beta wrote this over a Sunday night. It "works": Gemini says
+Pisda ji's beta wrote this over a Sunday night. It "works": Gemini says
 "Done! Booked." Then Priya walks in at 2 PM and there is no booking.
 
 Everything else (Gemini loop, reads, CRM) is already built and correct.
