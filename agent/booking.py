@@ -114,13 +114,23 @@ def write_booking(s: Session, offer: dict) -> tuple[dict | None, dict | None]:
 
 # ═════════════════════════════ STEP 3 ════════════════════════════════════════
 def prove_it(s: Session, booking_id: str, offer: dict) -> dict:
-    # 🐞 Sharma ji's beta: "The API said 201. Ship it."
-    #
-    # TODO STEP 3 · read it back before you say "booked"
-    #   • GET /bookings/{booking_id}
-    #       404 or network error  → not_verified(booking_id, ["..."])   (prepared helper)
-    #   • compare customer_id, room_id, date, start_time, end_time with what was approved
-    #   • status must be "confirmed"
-    #   • any problem → not_verified(booking_id, problems)
-    #   • all good    → receipt(s, record, offer)                       (prepared helper)
-    return receipt(s, {"id": booking_id, **offer}, offer)
+    expected = {"customer_id": s.customer["id"], "room_id": offer["room_id"],
+                "date": offer["date"], "start_time": offer["start_time"],
+                "end_time": offer["end_time"]}
+    with s.http() as h:
+        try:
+            r = h.get(f"/bookings/{booking_id}")
+        except httpx.HTTPError as e:
+            return not_verified(booking_id, [f"could not read it back ({type(e).__name__})"])
+    if r.status_code == 404:
+        return not_verified(booking_id, ["booking does not exist in the CRM"])
+
+    record = r.json()
+    problems = [f"{k}: expected {v!r}, CRM has {record.get(k)!r}"
+                for k, v in expected.items() if record.get(k) != v]
+    if record.get("status") != "confirmed":
+        problems.append(f"status is {record.get('status')!r}, not 'confirmed'")
+
+    if problems:
+        return not_verified(booking_id, problems)
+    return receipt(s, record, offer)
