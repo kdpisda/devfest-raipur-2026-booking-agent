@@ -53,7 +53,7 @@ Chat commands: `/chaos ghost|wrong_room|pending|fail|slow|none`, `/reset`, `/qui
 
 ## The story
 
-Sharma ji runs **Chai & Code Cowork** in Raipur. Over the weekend his beta "shipped" an AI receptionist
+Pisda ji runs **Chai & Code Cowork** in Raipur. Over the weekend his beta "shipped" an AI receptionist
 on WhatsApp. On Monday it told Priya her meeting room was booked. On Tuesday at 2 PM, Priya and five
 colleagues walked in. There was no booking. Today we rebuild that agent, in three steps, so it never
 says "booked" unless it really booked. (Everyone in this story is fictional.)
@@ -61,7 +61,7 @@ says "booked" unless it really booked. (Everyone in this story is fictional.)
 ## You edit ONE file: `agent/booking.py`
 
 Everything else (the Gemini loop, the read tools, the CRM) is prepared. `agent/booking.py` is
-Sharma ji's beta's code. It *runs*, and it is wrong in three ways. Each step fixes one function:
+Pisda ji's beta's code. It *runs*, and it is wrong in three ways. Each step fixes one function:
 
 | Step | Function | The beta's bug | Branch to start | Check yourself | Stuck? |
 |------|----------|----------------|-----------------|----------------|--------|

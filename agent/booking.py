@@ -1,6 +1,6 @@
 """agent/booking.py — THE ONLY FILE YOU EDIT TODAY.
 
-Sharma ji's beta wrote this over a Sunday night. It "works": Gemini says
+Pisda ji's beta wrote this over a Sunday night. It "works": Gemini says
 "Done! Booked." Then Priya walks in at 2 PM and there is no booking.
 
 Everything else (Gemini loop, reads, CRM) is already built and correct.
@@ -81,7 +81,7 @@ def write_booking_naive(s: Session, offer: dict):
 
 # ═════════════════════════════ STEP 1 ════════════════════════════════════════
 def check_approval(s: Session, offer_id: str) -> tuple[dict | None, dict | None]:
-    # 🐞 Sharma ji's beta: "Gemini said they agreed. Good enough."
+    # 🐞 Pisda ji's beta: "Gemini said they agreed. Good enough."
     #
     # TODO STEP 1 · did the customer REALLY say yes?
     #   • unknown offer_id (the model made it up)  → None, {"status": "rejected", ...}
@@ -93,7 +93,7 @@ def check_approval(s: Session, offer_id: str) -> tuple[dict | None, dict | None]
 
 # ═════════════════════════════ STEP 2 ════════════════════════════════════════
 def write_booking(s: Session, offer: dict) -> tuple[dict | None, dict | None]:
-    # 🐞 Sharma ji's beta: fire and forget.
+    # 🐞 Pisda ji's beta: fire and forget.
     #
     # TODO STEP 2 · write it ONCE, and be honest when it fails
     #   • key = f"{s.customer['id']}:{offer['offer_id']}"  → send as header "Idempotency-Key"
@@ -110,7 +110,7 @@ def write_booking(s: Session, offer: dict) -> tuple[dict | None, dict | None]:
 
 # ═════════════════════════════ STEP 3 ════════════════════════════════════════
 def prove_it(s: Session, booking_id: str, offer: dict) -> dict:
-    # 🐞 Sharma ji's beta: "The API said 201. Ship it."
+    # 🐞 Pisda ji's beta: "The API said 201. Ship it."
     #
     # TODO STEP 3 · read it back before you say "booked"
     #   • GET /bookings/{booking_id}
