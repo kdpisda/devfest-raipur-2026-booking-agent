@@ -81,14 +81,14 @@ def write_booking_naive(s: Session, offer: dict):
 
 # ═════════════════════════════ STEP 1 ════════════════════════════════════════
 def check_approval(s: Session, offer_id: str) -> tuple[dict | None, dict | None]:
-    # 🐞 Sharma ji's beta: "Gemini said they agreed. Good enough."
-    #
-    # TODO STEP 1 · did the customer REALLY say yes?
-    #   • unknown offer_id (the model made it up)  → None, {"status": "rejected", ...}
-    #   • customer didn't tap Confirm: s.confirm(offer) is False
-    #                                               → None, {"status": "not_confirmed", ...}
-    #   • otherwise                                 → offer, None
-    return s.offers.get(offer_id), None
+    offer = s.offers.get(offer_id)
+    if offer is None:
+        return None, {"status": "rejected",
+                      "reason": "unknown offer_id: we only book offers we showed"}
+    if not s.confirm(offer):
+        return None, {"status": "not_confirmed",
+                      "reason": "customer did not tap Confirm; nothing was booked"}
+    return offer, None
 
 
 # ═════════════════════════════ STEP 2 ════════════════════════════════════════
