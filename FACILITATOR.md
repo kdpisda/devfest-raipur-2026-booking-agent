@@ -5,8 +5,8 @@ Slot: **3:30–4:30 PM (60 min, right after lunch)**. Audience: students + worki
 
 ## The story (tell it, don't read it)
 
-1. **The hire.** Sharma ji runs Chai & Code Cowork in Raipur. His beta ships an AI receptionist on WhatsApp over the weekend. Very proud.
-2. **The disaster.** Priya books a room for six on WhatsApp. "Done! Booked." Next day at 2 PM, six people walk in. No booking. Sharma ji is not proud.
+1. **The hire.** Pisda ji runs Chai & Code Cowork in Raipur. His beta ships an AI receptionist on WhatsApp over the weekend. Very proud.
+2. **The disaster.** Priya books a room for six on WhatsApp. "Done! Booked." Next day at 2 PM, six people walk in. No booking. Pisda ji is not proud.
 3. **The investigation.** Whose fault? (audience vote). The API lied, and nobody checked.
 4. **The rebuild.** Attendees inherit the beta's `agent/booking.py` and fix it in three functions: ask first (`check_approval`), write once and honestly (`write_booking`), read it back (`prove_it`).
 5. **Chaos week.** The audience picks how the CRM lies next. The agent has to stay honest.
@@ -43,7 +43,7 @@ Then everyone moves on together: `git stash && git checkout step-2`.
 | When | Prompt | What you're fishing for |
 |---|---|---|
 | After the cover | Hands up: built a chatbot? It ever *did* something? Checked it really happened? | Hands drop at the third question |
-| After the disaster | Whose fault? A) Gemini B) Sharma ji's beta C) the API D) nobody checked | Everyone is a bit right; D is the lesson |
+| After the disaster | Whose fault? A) Gemini B) Pisda ji's beta C) the API D) nobody checked | Everyone is a bit right; D is the lesson |
 | Model vs app slide | What else should never be the model's decision? | Refunds, discounts, deleting data, sending money |
 | Before step 3 | Ghost mode is on. What will your agent say now? | "Not confirmed yet" once verify works |
 | Chaos slide | What could go wrong with a booking API? Then: you pick the chaos mode | Map their answers onto ghost / wrong_room / pending / fail / slow |
