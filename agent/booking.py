@@ -93,18 +93,22 @@ def check_approval(s: Session, offer_id: str) -> tuple[dict | None, dict | None]
 
 # ═════════════════════════════ STEP 2 ════════════════════════════════════════
 def write_booking(s: Session, offer: dict) -> tuple[dict | None, dict | None]:
-    # 🐞 Sharma ji's beta: fire and forget.
-    #
-    # TODO STEP 2 · write it ONCE, and be honest when it fails
-    #   • key = f"{s.customer['id']}:{offer['offer_id']}"  → send as header "Idempotency-Key"
-    #   • httpx.TimeoutException  → return find_by_key(s, key)      (prepared helper)
-    #   • other httpx.HTTPError   → None, failed("could not reach the CRM")
-    #   • 409                     → None, {"status": "conflict", ...}
-    #   • any other >= 400        → None, failed(f"CRM said HTTP {r.status_code}")
-    #   • otherwise               → r.json(), None
+    key = f"{s.customer['id']}:{offer['offer_id']}"       # same intent → same key
     with s.http() as h:
-        r = h.post("/bookings",
-                   json={"customer_id": s.customer["id"], "offer_id": offer["offer_id"]})
+        try:
+            r = h.post("/bookings",
+                       json={"customer_id": s.customer["id"], "offer_id": offer["offer_id"]},
+                       headers={"Idempotency-Key": key})
+        except httpx.TimeoutException:
+            return find_by_key(s, key)                     # look before you retry
+        except httpx.HTTPError as e:
+            return None, failed(f"could not reach the CRM ({type(e).__name__})")
+
+    if r.status_code == 409:
+        return None, {"status": "conflict", "reason": "that slot was just taken",
+                      "instruction": "Apologise and offer to check availability again."}
+    if r.status_code >= 400:
+        return None, failed(f"CRM said HTTP {r.status_code}")
     return r.json(), None
 
 
