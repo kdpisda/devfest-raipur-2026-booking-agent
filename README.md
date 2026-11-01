@@ -58,27 +58,18 @@ on WhatsApp. On Monday it told Priya her meeting room was booked. On Tuesday at 
 colleagues walked in. There was no booking. Today we rebuild that agent, in three steps, so it never
 says "booked" unless it really booked. (Everyone in this story is fictional.)
 
-## The steps are git branches
+## You edit ONE file: `agent/booking.py`
 
-Every step has a **start** branch and a **solution** branch. Work on the start branch; if you get stuck
-or fall behind, jump to the solution and carry on from there.
+Everything else (the Gemini loop, the read tools, the CRM) is prepared. `agent/booking.py` is
+Sharma ji's beta's code. It *runs*, and it is wrong in three ways. Each step fixes one function:
 
-| Step | Start here | What you build | Check yourself | Stuck? |
-|------|------------|----------------|----------------|--------|
-| 1 · Reads | `git checkout step-1` | TODO 1–3: declare `check_availability`, `lookup_customer`, `check_availability` | `pytest tests/test_step1_reads.py` | `git checkout step-1-solution` |
-| 2 · The write | `git checkout step-2` | TODO 4: `create_booking` + the Confirm gate | `pytest tests/test_step2_write.py` | `git checkout step-2-solution` |
-| 3 · The proof | `git checkout step-3` | TODO 5: `verify_booking` read-back | `pytest tests/test_step3_verify.py` | `git checkout step-3-solution` |
-| ★ Bonus | `step-3-solution` | timeouts + idempotency (already implemented) | `pytest tests/test_bonus_idempotency.py` | — |
+| Step | Function | The beta's bug | Branch to start | Check yourself | Stuck? |
+|------|----------|----------------|-----------------|----------------|--------|
+| 1 | `check_approval` | books without the customer tapping Confirm, books offers the model made up | `step-1` | `pytest tests/test_step1_approval.py` | `git checkout step-1-solution` |
+| 2 | `write_booking` | crashes when the CRM says no, no Idempotency-Key | `step-2` | `pytest tests/test_step2_write.py` | `git checkout step-2-solution` |
+| 3 | `prove_it` | believes the API, prints a receipt for a booking that doesn't exist | `step-3` | `pytest tests/test_step3_proof.py` | `git checkout step-3-solution` |
 
-Switching branches with unfinished edits? Park them first:
-
-```bash
-git stash            # keeps your work safe
-git checkout step-2  # move on with the room
-git stash list       # your old attempt is still there
-```
-
-See exactly what a solution changed: `git diff step-1..step-1-solution`.
+Switching branches with unfinished edits? `git stash` first. See a solution: `git diff step-1..step-1-solution`.
 
 ## Chaos modes (the CRM lies to you on purpose)
 

@@ -2,7 +2,7 @@
 
     customer msg -> Gemini -> (function_call?) -> Python runs tool -> result -> Gemini -> ... -> reply
 
-This file is prepared for you. Read it; the interesting decisions are in tools.py / verify.py.
+This file is prepared for you. Read it; today you only edit booking.py.
 """
 from __future__ import annotations
 
